@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+
+{% block title %}WiShare - Upload{% endblock %}
+
+{% block styles %}
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/dropzone/5.4.0/min/dropzone.min.css">
+{% endblock %}
+
+{% block heading %}Upload File{% endblock %}
+
+{% block content %}
+    <p>Click the button below to upload a file:</p>
+    <form method="POST" action='/api/upload_file' class="dropzone dz-clickable" id="dropper" enctype="multipart/form-data"></form>
+    <p class="mt-3"><a href="{{ url_for('main.index') }}" class="btn btn-secondary">Back to Home</a></p>
+{% endblock %}
+
+{% block scripts %}
+    <script type="application/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/dropzone/5.4.0/min/dropzone.min.js"></script>
+    <script type="application/javascript">
+        Dropzone.options.dropper = {
+            paramName: 'file',
+            chunking: true,
+            forceChunking: true,
+            url: '/api/upload_file',
+            maxFilesize: 1025, // megabytes
+            chunkSize: 1000000 // bytes
+        }
+    </script>
+{% endblock %}
