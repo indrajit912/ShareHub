@@ -1,3 +1,7 @@
+# A webapp to share files
+# Author: Indrajit Ghosh
+# Created On: Mar 05, 2024
+
 from flask import Flask
 from config import get_config
 

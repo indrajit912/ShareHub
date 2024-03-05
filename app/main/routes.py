@@ -36,17 +36,18 @@ def download():
 
         if len(selected_files) == 1:
             # If only one file is selected, provide a direct download link
-            flash('File downloaded successfully.', 'success')
             return send_file(os.path.join(current_app.config['UPLOAD_FOLDER'], selected_files[0]), as_attachment=True)
         
         elif len(selected_files) > 1:
             zip_file_path = os.path.join(current_app.config['UPLOAD_FOLDER'], 'selected_files.zip')
 
-            # Create a ZIP archive containing selected files
+            # Create a ZIP archive containing selected files within a common folder
+            common_folder_name = 'selected_files'
             with zipfile.ZipFile(zip_file_path, 'w') as zipf:
                 for file_name in selected_files:
                     file_path = os.path.join(current_app.config['UPLOAD_FOLDER'], file_name)
-                    zipf.write(file_path)
+                    arcname = os.path.join(common_folder_name, os.path.basename(file_name))
+                    zipf.write(file_path, arcname=arcname)
 
             # Send the ZIP archive to the user
             return send_file(Path(zip_file_path).absolute(), as_attachment=True)

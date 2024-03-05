@@ -1,6 +1,9 @@
+from pathlib import Path
+
 class Config:
+    BASE_DIR = Path(__name__).parent.absolute()
     SECRET_KEY = 'your_secret_key'
-    UPLOAD_FOLDER = 'uploads'
+    UPLOAD_FOLDER = BASE_DIR / 'uploads'
     MAX_CONTENT_LENGTH = 16 * 1024 * 1024  # 16MB maximum file size
 
 class DevelopmentConfig(Config):
