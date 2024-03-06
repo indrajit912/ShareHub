@@ -1,3 +1,8 @@
+# app/api/routes.py
+# Author: Indrajit Ghosh
+# Created On: Mar 05, 2024
+# 
+
 import logging
 import os
 from flask import request, make_response, current_app
@@ -10,7 +15,7 @@ logger = logging.getLogger(__name__)
 def upload_file():
     file = request.files['file']
 
-    save_path = os.path.join(current_app.config['UPLOAD_FOLDER'], secure_filename(file.filename))
+    save_path = current_app.config['UPLOAD_DIR'] / secure_filename(file.filename)
     current_chunk = int(request.form['dzchunkindex'])
 
     # If the file already exists it's ok if we are appending to it,
