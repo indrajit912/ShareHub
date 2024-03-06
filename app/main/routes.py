@@ -4,11 +4,9 @@
 # 
 
 import logging
-import os
-import zipfile
 from pathlib import Path
 
-from flask import render_template, current_app, request, send_file, redirect, url_for, flash
+from flask import render_template, current_app, request, send_file, redirect, url_for, flash, make_response
 from . import main_bp
 
 logger = logging.getLogger(__name__)
@@ -21,7 +19,15 @@ def index():
 def upload():
     return render_template('upload.html')
 
-@main_bp.route('/download/<filename>', methods=['GET'])
+@main_bp.route('/all_files/', methods=['GET'])
+def all_files():
+    upload_dir:Path = current_app.config['UPLOAD_DIR']
+    files = [x for x in upload_dir.glob('**/*') if x.is_file()]
+
+    return render_template('all_files.html', files=files)
+
+
+@main_bp.route('/download/<filename>', methods=['GET', 'POST'])
 def download_file(filename):
     file_path:Path = current_app.config['UPLOAD_DIR'] / filename
 
@@ -30,32 +36,18 @@ def download_file(filename):
     else:
         # Redirect to the download route if the file does not exist
         flash(f'File not found: {filename}', 'error')
-        return redirect(url_for('main.download'))
-    
+        return make_response(('ERROR: File not found!', 404))
 
-@main_bp.route('/download/', methods=['GET', 'POST'])
-def download():
-    if request.method == 'POST':
-        selected_files = request.form.getlist('file_checkbox')
 
-        if len(selected_files) == 1:
-            # If only one file is selected, provide a direct download link
-            return send_file(current_app.config['UPLOAD_DIR'] / selected_files[0], as_attachment=True)
-        
-        elif len(selected_files) > 1:
-            zip_file_path = current_app.config['UPLOAD_DIR'] / 'selected_files.zip'
+@main_bp.route('/delete/<filename>', methods=['GET', 'POST'])
+def delete_file(filename):
+    file_path:Path = current_app.config['UPLOAD_DIR'] / filename
 
-            # Create a ZIP archive containing selected files within a common dir
-            common_dir_name = Path('selected_files')
-            with zipfile.ZipFile(zip_file_path, 'w') as zipf:
-                for file_name in selected_files:
-                    file_path = current_app.config['UPLOAD_DIR'] / file_name
-                    arcname = common_dir_name / os.path.basename(file_name)
-                    zipf.write(file_path, arcname=arcname)
-
-            # Send the ZIP archive to the user
-            return send_file(Path(zip_file_path).absolute(), as_attachment=True)
-
-    # If the request method is GET, render the download.html template
-    files = os.listdir(current_app.config['UPLOAD_DIR'])
-    return render_template('download.html', files=files)
+    if file_path.exists():
+        file_path.unlink()
+        flash("File deleted successfully!", 'success')
+        return redirect(url_for('main.all_files'))
+    else:
+        # Redirect to the download route if the file does not exist
+        flash(f'File not found: {filename}', 'error')
+        return make_response(('ERROR: File not found!', 404))
