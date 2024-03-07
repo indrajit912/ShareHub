@@ -18,6 +18,7 @@ class Config:
     BASE_DIR = Path(__name__).parent.absolute()
     UPLOAD_DIR = BASE_DIR / 'uploads'
     LOG_FILE = BASE_DIR / 'app.log'
+    PORT = os.environ.get("PORT") or 8080
 
     FLASK_ENV = os.environ.get("FLASK_ENV") or 'production'
     if FLASK_ENV in ['dev', 'developement']:
