@@ -20,7 +20,15 @@
                     {% endif %}
 
                     <div class="card-body">
-                      <p><code>{{ file.name }}</code></p>
+                      <p>
+                        <code>
+                          {% if file.name|length > 21 %}
+                              {{ file.name[:21] + '...' }}
+                          {% else %}
+                              {{ file.name }}
+                          {% endif %}
+                        </code>
+                      </p>
                       <div class="d-inline-flex gap-1">
                         <button class="btn btn-primary btn-sm" type="button">Select</button>
 
