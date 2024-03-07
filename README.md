@@ -42,6 +42,45 @@ ShareHub is a Flask web application designed to facilitate easy file sharing acr
 - Access your files from any device with an internet connection.
 - Download files as needed.
 
+## Running as a Systemd Service (Ubuntu)
+1. Create a systemd service file:
+    ```bash
+    [Unit]
+    Description=ShareHub Flask Application
+    After=network.target
+
+    [Service]
+    User=<your-ubuntu-username>
+    Group=<your-ubuntu-group>
+    WorkingDirectory=/home/<path-to>/ShareHub
+    Environment="PATH=/home/<path-to>/ShareHub/env/bin"
+    ExecStart=/home/<path-to>/ShareHub/env/bin/python run.py
+    Restart=always
+
+    [Install]
+    WantedBy=multi-user.target
+
+    ```
+    Make sure to replace <your-ubuntu-username> and <your-ubuntu-group> with your actual Ubuntu username and group. Also, adjust the path to the virtual environment and the run.py script accordingly.
+
+2. Move the file to the systemd directory:
+    ```bash
+    sudo cp sharehub.service /etc/systemd/system/
+    ```
+3. Reload systemd and start the service:
+    ```bash
+    sudo systemctl daemon-reload
+    sudo systemctl start sharehub
+    ```
+4. Enable the service to start on boot (Optional):
+    ```bash
+    sudo systemctl enable sharehub
+    ```
+5. Check the status of the service:
+    ```bash
+    sudo systemctl status sharehub
+    ```
+
 ## Contributing
 If you'd like to contribute to ShareHub, please fork the repository and create a pull request. For major changes, please open an issue first to discuss the proposed changes.
 
